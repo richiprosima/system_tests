@@ -155,6 +155,14 @@ if(AMENT_ENABLE_TESTING)
     ament_target_dependencies(test_replier_cpp__${middleware_impl}
       "${middleware_impl}"
       "rclcpp")
+
+    add_executable(test_parameters_cpp__${middleware_impl} "test/test_parameters.cpp")
+    add_dependencies(test_parameters_cpp__${middleware_impl} ${PROJECT_NAME})
+    rosidl_target_interfaces(test_parameters_cpp__${middleware_impl}
+      ${PROJECT_NAME} ${typesupport_impl})
+    ament_target_dependencies(test_parameters_cpp__${middleware_impl}
+      "${middleware_impl}"
+      "rclcpp")
   endforeach()
 
   # create tests for each combination of rmw implementation
