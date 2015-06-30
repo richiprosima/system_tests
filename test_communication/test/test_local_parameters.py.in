@@ -1,0 +1,25 @@
+from launch import LaunchDescriptor
+from launch.exit_handler import primary_exit_handler
+from launch.launcher import DefaultLauncher
+
+
+def test_local_parameters():
+    ld = LaunchDescriptor()
+
+    ld.add_process(
+        cmd=['@TEST_PARAMETERS_EXECUTABLE@'],
+        name='test_parameters',
+    )
+
+
+    launcher = DefaultLauncher()
+    launcher.add_launch_descriptor(ld)
+    rc = launcher.launch()
+
+    assert rc == 0, \
+        "The parameter test failed with exit code '" + str(rc) + "'. " \
+        'See console output'
+
+
+if __name__ == '__main__':
+    test_local_parameters()

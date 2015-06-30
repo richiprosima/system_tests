@@ -216,6 +216,21 @@ if(AMENT_ENABLE_TESTING)
       endforeach()
       endif()
     endforeach()
+
+    # Parameter tests standalone single implementation
+    set(TEST_PARAMETERS_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_parameters_cpp__${middleware_impl1}${test_executable_extension}")
+    configure_file(
+      test/test_parameters.py.in
+      test_parameters_cpp__${middleware_impl1}.py
+      @ONLY
+    )
+    ament_add_nose_test(parameters_cpp__${middleware_impl1} "${CMAKE_CURRENT_BINARY_DIR}/test_parameters_cpp__${middleware_impl1}.py" TIMEOUT 15)
+    set_tests_properties(
+      parameters_cpp__${middleware_impl1}
+      PROPERTIES DEPENDS "test_parameters_cpp__${middleware_impl1}"
+    )
+
+
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
 
