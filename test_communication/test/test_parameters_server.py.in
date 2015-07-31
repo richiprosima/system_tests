@@ -12,7 +12,7 @@ def test_remote_parameters():
     )
 
     ld.add_process(
-        cmd=['@TEST_PARAMETERS_EXECUTABLE@', 'test_parameters_server'],
+        cmd=['@TEST_REMOTE_PARAMETERS_EXECUTABLE@', 'test_parameters_server'],
         name='test_remote_parameters',
         exit_handler=primary_exit_handler,
     )
