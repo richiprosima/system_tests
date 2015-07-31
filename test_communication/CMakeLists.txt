@@ -13,8 +13,18 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 if(AMENT_ENABLE_TESTING)
+<<<<<<< HEAD
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
+=======
+  find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_nose REQUIRED)
+  find_package(builtin_interfaces REQUIRED)
+  find_package(rclcpp REQUIRED)
+  find_package(rmw REQUIRED)
+  find_package(rmw_implementation REQUIRED)
+  find_package(rosidl_default_generators REQUIRED)
+>>>>>>> switch to use gtest
 
   set(message_files
     "msg/Builtins.msg"
@@ -156,7 +166,7 @@ if(AMENT_ENABLE_TESTING)
       "${middleware_impl}"
       "rclcpp")
 
-    add_executable(test_parameters_cpp__${middleware_impl} "test/test_parameters.cpp")
+    ament_add_gtest(test_parameters_cpp__${middleware_impl} "test/test_parameters.cpp")
     add_dependencies(test_parameters_cpp__${middleware_impl} ${PROJECT_NAME})
     rosidl_target_interfaces(test_parameters_cpp__${middleware_impl}
       ${PROJECT_NAME} ${typesupport_impl})
@@ -216,20 +226,6 @@ if(AMENT_ENABLE_TESTING)
       endforeach()
       endif()
     endforeach()
-
-    # Parameter tests standalone single implementation
-    set(TEST_PARAMETERS_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_parameters_cpp__${middleware_impl1}${test_executable_extension}")
-    configure_file(
-      test/test_parameters.py.in
-      test_parameters_cpp__${middleware_impl1}.py
-      @ONLY
-    )
-    ament_add_nose_test(parameters_cpp__${middleware_impl1} "${CMAKE_CURRENT_BINARY_DIR}/test_parameters_cpp__${middleware_impl1}.py" TIMEOUT 15)
-    set_tests_properties(
-      parameters_cpp__${middleware_impl1}
-      PROPERTIES DEPENDS "test_parameters_cpp__${middleware_impl1}"
-    )
-
 
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
