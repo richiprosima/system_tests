@@ -13,18 +13,9 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 if(AMENT_ENABLE_TESTING)
-<<<<<<< HEAD
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
-=======
-  find_package(ament_cmake_gtest REQUIRED)
-  find_package(ament_cmake_nose REQUIRED)
-  find_package(builtin_interfaces REQUIRED)
-  find_package(rclcpp REQUIRED)
-  find_package(rmw REQUIRED)
-  find_package(rmw_implementation REQUIRED)
-  find_package(rosidl_default_generators REQUIRED)
->>>>>>> switch to use gtest
+
 
   set(message_files
     "msg/Builtins.msg"
@@ -165,8 +156,6 @@ if(AMENT_ENABLE_TESTING)
     ament_target_dependencies(test_replier_cpp__${middleware_impl}
       "${middleware_impl}"
       "rclcpp")
-
-
   endforeach()
 
   # create tests for each combination of rmw implementation
@@ -220,7 +209,6 @@ if(AMENT_ENABLE_TESTING)
       endforeach()
       endif()
     endforeach()
-
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
 
