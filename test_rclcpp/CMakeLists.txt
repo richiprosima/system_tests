@@ -136,16 +136,19 @@ if(AMENT_ENABLE_TESTING)
         "rclcpp")
     endif()
 
-    ament_add_gtest(test_parameters_cpp__${middleware_impl} "test/test_parameters.cpp")
-    add_dependencies(test_parameters_cpp__${middleware_impl} ${PROJECT_NAME})
-    rosidl_target_interfaces(test_parameters_cpp__${middleware_impl}
+    ament_add_gtest(local_parameters_cpp__${middleware_impl} "test/local_parameters.cpp")
+    add_dependencies(local_parameters_cpp__${middleware_impl} ${PROJECT_NAME})
+    rosidl_target_interfaces(local_parameters_cpp__${middleware_impl}
       ${PROJECT_NAME} ${typesupport_impl})
-    ament_target_dependencies(test_parameters_cpp__${middleware_impl}
+    ament_target_dependencies(local_parameters_cpp__${middleware_impl}
       "${middleware_impl}"
       "rclcpp")
 
     # Parameter tests single implementation
-    ament_add_gtest(test_remote_parameters_cpp__${middleware_impl} "test/test_remote_parameters.cpp")
+    add_executable(test_remote_parameters_cpp__${middleware_impl} "test/test_remote_parameters.cpp")
+    target_link_libraries(test_remote_parameters_cpp__${middleware_impl} ${GTEST_LIBRARIES})
+    # the above could be replaced by a helper which won't register the gtest for running
+    # ament_add_gtest_subtest(test_remote_parameters_cpp__${middleware_impl} "test/test_remote_parameters.cpp")
     add_dependencies(test_remote_parameters_cpp__${middleware_impl} ${PROJECT_NAME})
     rosidl_target_interfaces(test_remote_parameters_cpp__${middleware_impl}
       ${PROJECT_NAME} ${typesupport_impl})
