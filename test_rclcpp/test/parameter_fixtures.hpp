@@ -29,6 +29,7 @@ void set_test_parameters(std::shared_ptr<rclcpp::parameter_client::SyncParameter
   auto set_parameters_results = parameters_client->set_parameters({
     rclcpp::parameter::ParameterVariant("foo", 2),
     rclcpp::parameter::ParameterVariant("bar", "hello"),
+    rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
     rclcpp::parameter::ParameterVariant("baz", 1.45),
     rclcpp::parameter::ParameterVariant("foo.first", 8),
     rclcpp::parameter::ParameterVariant("foo.second", 42),
@@ -49,6 +50,7 @@ void verify_set_parameters_async(
   auto set_parameters_results = parameters_client->set_parameters({
     rclcpp::parameter::ParameterVariant("foo", 2),
     rclcpp::parameter::ParameterVariant("bar", "hello"),
+    rclcpp::parameter::ParameterVariant("barstr", std::string("hello_str")),
     rclcpp::parameter::ParameterVariant("baz", 1.45),
     rclcpp::parameter::ParameterVariant("foo.first", 8),
     rclcpp::parameter::ParameterVariant("foo.second", 42),
