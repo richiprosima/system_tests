@@ -22,22 +22,22 @@
 #include "parameter_fixtures.hpp"
 
 
-TEST(parameters, test_local_parameters){
-
-
+TEST(parameters, local_synchronous){
   auto node = rclcpp::Node::make_shared(std::string("test_parameters_"));
-
-
   // TODO(esteve): Make the parameter service automatically start with the node.
   auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
-
-
   auto parameters_client = std::make_shared<rclcpp::parameter_client::SyncParametersClient>(node);
-
   set_test_parameters(parameters_client);
-
   verify_test_parameters(parameters_client);
+}
 
+TEST(parameters, local_asynchronous){
+  auto node = rclcpp::Node::make_shared(std::string("test_parameters_"));
+  // TODO(esteve): Make the parameter service automatically start with the node.
+  auto parameter_service = std::make_shared<rclcpp::parameter_service::ParameterService>(node);
+  auto parameters_client = std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node);
+  verify_set_parameters_async(node, parameters_client);
+  verify_get_parameters_async(node, parameters_client);
 }
 
 int main(int argc, char **argv) {
