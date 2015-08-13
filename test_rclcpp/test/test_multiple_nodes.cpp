@@ -66,6 +66,7 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes) {
   for (size_t i = 0; i < 5; ++i) {
     msg->data = i;
     publisher1->publish(msg);
+    executor.spin_some();
     publisher2->publish(msg);
     executor.spin_some();
   }
@@ -112,6 +113,7 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_one_node) {
   for (size_t i = 0; i < 5; ++i) {
     msg->data = i;
     publisher1->publish(msg);
+    executor.spin_some();
     publisher2->publish(msg);
     executor.spin_some();
   }
@@ -160,6 +162,7 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_within_nodes) {
   for (size_t i = 0; i < 5; ++i) {
     msg->data = i;
     publisher1->publish(msg);
+    executor.spin_some();
     publisher2->publish(msg);
     executor.spin_some();
   }
@@ -167,5 +170,4 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_within_nodes) {
   //check that messages were received
   EXPECT_EQ(node1_messages_received, 5);
   EXPECT_EQ(node2_messages_received, 5);
-
 }
