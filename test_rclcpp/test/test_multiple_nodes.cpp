@@ -60,13 +60,14 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes) {
 
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
   rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node1);
+  executor.add_node(node2);
 
   for (size_t i = 0; i < 5; ++i) {
     msg->data = i;
     publisher1->publish(msg);
-    executor.spin_node_once(node1, std::chrono::milliseconds(1));
     publisher2->publish(msg);
-    executor.spin_node_once(node2, std::chrono::milliseconds(1));
+    executor.spin_some();
   }
 
   //check that messages were received
@@ -106,13 +107,13 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_one_node) {
 
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
   rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node1);
 
   for (size_t i = 0; i < 5; ++i) {
     msg->data = i;
     publisher1->publish(msg);
-    executor.spin_node_once(node1, std::chrono::milliseconds(1));
     publisher2->publish(msg);
-    executor.spin_node_once(node1, std::chrono::milliseconds(1));
+    executor.spin_some();
   }
 
   //check that messages were received
@@ -153,13 +154,14 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_within_nodes) {
 
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
   rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node1);
+  executor.add_node(node2);
 
   for (size_t i = 0; i < 5; ++i) {
     msg->data = i;
     publisher1->publish(msg);
-    executor.spin_node_once(node1, std::chrono::milliseconds(1));
     publisher2->publish(msg);
-    executor.spin_node_once(node2, std::chrono::milliseconds(1));
+    executor.spin_some();
   }
 
   //check that messages were received
