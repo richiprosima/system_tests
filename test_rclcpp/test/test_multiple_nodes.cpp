@@ -28,6 +28,57 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes_executors) {
+  auto node1 = rclcpp::Node::make_shared("test_multiple_nodes_1");
+  auto node2 = rclcpp::Node::make_shared("test_multiple_nodes_2");
+  size_t node1_messages_received = 0;
+  size_t node2_messages_received = 0;
+
+  rmw_qos_profile_t qos_profile = rmw_qos_profile_default;
+
+  auto node2_callback =
+    [&node2_messages_received](const test_rclcpp::msg::UInt32::SharedPtr msg) -> void
+    {
+      ++node2_messages_received;
+      printf("  node2_callback() %lu with message data %u\n", node2_messages_received, msg->data);
+    };
+
+  auto node1_callback =
+    [&node1_messages_received](const test_rclcpp::msg::UInt32::SharedPtr msg) -> void
+    {
+      ++node1_messages_received;
+      printf("  node1_callback() %lu with message data %u\n", node1_messages_received, msg->data);
+    };
+
+  auto publisher1 = node1->create_publisher<test_rclcpp::msg::UInt32>("foo", qos_profile);
+  auto subscriber1 = node2->create_subscription<test_rclcpp::msg::UInt32>("foo",
+      qos_profile, node2_callback);
+
+  auto publisher2 = node2->create_publisher<test_rclcpp::msg::UInt32>("bar", qos_profile);
+  auto subscriber2 = node1->create_subscription<test_rclcpp::msg::UInt32>("bar",
+      qos_profile, node1_callback);
+
+  auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+  rclcpp::executors::SingleThreadedExecutor executor1;
+  rclcpp::executors::SingleThreadedExecutor executor2;
+  executor1.add_node(node1);
+  executor2.add_node(node2);
+
+  for (size_t i = 0; i < 5; ++i) {
+    msg->data = i;
+    publisher1->publish(msg);
+    executor1.spin_some();
+    executor2.spin_some();
+    publisher2->publish(msg);
+    executor1.spin_some();
+    executor2.spin_some();
+  }
+
+  //check that messages were received
+  EXPECT_EQ(node1_messages_received, 5);
+  EXPECT_EQ(node2_messages_received, 5);
+}
+
 TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes) {
   auto node1 = rclcpp::Node::make_shared("test_multiple_nodes_1");
   auto node2 = rclcpp::Node::make_shared("test_multiple_nodes_2");
@@ -75,6 +126,8 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes) {
   EXPECT_EQ(node1_messages_received, 5);
   EXPECT_EQ(node2_messages_received, 5);
 }
+
+
 
 // For comparison, this setup publishes the same topics within one node
 TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_one_node) {
