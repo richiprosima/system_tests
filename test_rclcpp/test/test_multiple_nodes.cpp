@@ -28,6 +28,8 @@
 # define CLASSNAME(NAME, SUFFIX) NAME
 #endif
 
+#define ITERATIONS 100
+
 TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes_executors) {
   auto node1 = rclcpp::Node::make_shared("test_multiple_nodes_1");
   auto node2 = rclcpp::Node::make_shared("test_multiple_nodes_2");
@@ -64,7 +66,7 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes_execu
   executor1.add_node(node1);
   executor2.add_node(node2);
 
-  for (size_t i = 0; i < 5; ++i) {
+  for (size_t i = 0; i < ITERATIONS; ++i) {
     msg->data = i;
     publisher1->publish(msg);
     executor1.spin_some();
@@ -75,8 +77,8 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes_execu
   }
 
   //check that messages were received
-  EXPECT_EQ(node1_messages_received, 5);
-  EXPECT_EQ(node2_messages_received, 5);
+  EXPECT_EQ(node1_messages_received, ITERATIONS);
+  EXPECT_EQ(node2_messages_received, ITERATIONS);
 }
 
 TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes) {
@@ -113,8 +115,9 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes) {
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node1);
   executor.add_node(node2);
+  rclcpp::utilities::sleep_for(1_s);
 
-  for (size_t i = 0; i < 5; ++i) {
+  for (size_t i = 0; i < ITERATIONS; ++i) {
     msg->data = i;
     publisher1->publish(msg);
     executor.spin_some();
@@ -123,8 +126,8 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_across_nodes) {
   }
 
   //check that messages were received
-  EXPECT_EQ(node1_messages_received, 5);
-  EXPECT_EQ(node2_messages_received, 5);
+  EXPECT_EQ(node1_messages_received, ITERATIONS);
+  EXPECT_EQ(node2_messages_received, ITERATIONS);
 }
 
 
@@ -163,7 +166,7 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_one_node) {
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node1);
 
-  for (size_t i = 0; i < 5; ++i) {
+  for (size_t i = 0; i < ITERATIONS; ++i) {
     msg->data = i;
     publisher1->publish(msg);
     executor.spin_some();
@@ -172,8 +175,8 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_one_node) {
   }
 
   //check that messages were received
-  EXPECT_EQ(callback1_messages_received, 5);
-  EXPECT_EQ(callback2_messages_received, 5);
+  EXPECT_EQ(callback1_messages_received, ITERATIONS);
+  EXPECT_EQ(callback2_messages_received, ITERATIONS);
 }
 
 // For comparison, this setup has two nodes, but does not publish across nodes
@@ -212,7 +215,7 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_within_nodes) {
   executor.add_node(node1);
   executor.add_node(node2);
 
-  for (size_t i = 0; i < 5; ++i) {
+  for (size_t i = 0; i < ITERATIONS; ++i) {
     msg->data = i;
     publisher1->publish(msg);
     executor.spin_some();
@@ -221,6 +224,6 @@ TEST(CLASSNAME(test_multiple_nodes, RMW_IMPLEMENTATION), spin_within_nodes) {
   }
 
   //check that messages were received
-  EXPECT_EQ(node1_messages_received, 5);
-  EXPECT_EQ(node2_messages_received, 5);
+  EXPECT_EQ(node1_messages_received, ITERATIONS);
+  EXPECT_EQ(node2_messages_received, ITERATIONS);
 }
