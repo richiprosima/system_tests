@@ -22,8 +22,10 @@
 
 #include <rclcpp/rclcpp.hpp>
 
+const double test_epsilon = 1e-6;
 
-void set_test_parameters(std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
+void set_test_parameters(
+  std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
 {
   // Set several differnet types of parameters.
   auto set_parameters_results = parameters_client->set_parameters({
@@ -63,26 +65,33 @@ void verify_set_parameters_async(
   }
 }
 
-void verify_test_parameters(std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
+void verify_test_parameters(
+  std::shared_ptr<rclcpp::parameter_client::SyncParametersClient> parameters_client)
 {
-  // List the details of a few parameters up to a namespace depth of 10.
-  auto parameters_and_prefixes = parameters_client->list_parameters({"foo", "bar"}, 10);
+  auto parameters_and_prefixes = parameters_client->list_parameters({"foo", "bar"}, 0);
   for (auto & name : parameters_and_prefixes.names) {
-    std::cout << "Parameter name: " << name << std::endl;
     EXPECT_TRUE(name == "foo" || name == "bar");
   }
   for (auto & prefix : parameters_and_prefixes.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
+  // Test different depth
+  auto parameters_and_prefixes4 = parameters_client->list_parameters({"foo"}, 1);
+  for (auto & name : parameters_and_prefixes4.names) {
+    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
+  }
+  for (auto & prefix : parameters_and_prefixes4.prefixes) {
+    EXPECT_STREQ("foo", prefix.c_str());
+  }
 
   // Get a few of the parameters just set.
   for (auto & parameter : parameters_client->get_parameters({"foo", "bar", "baz"})) {
-    std::cout << parameter.get_name() << parameter.to_string() << parameter.get_type_name() << std::endl;
+    //std::cout << "Parameter is:" << std::endl << parameter.to_yaml() << std::endl;
     if (parameter.get_name() == "foo")
     {
       EXPECT_STREQ("2", parameter.to_string().c_str());
-      EXPECT_STREQ("int", parameter.get_type_name().c_str());
+      EXPECT_STREQ("integer", parameter.get_type_name().c_str());
     }
     else if (parameter.get_name() == "bar")
     {
@@ -91,8 +100,8 @@ void verify_test_parameters(std::shared_ptr<rclcpp::parameter_client::SyncParame
     }
     else if (parameter.get_name() == "baz")
     {
-      EXPECT_STREQ("1.45", parameter.to_string().c_str());
       EXPECT_STREQ("double", parameter.get_type_name().c_str());
+      EXPECT_NEAR(1.45, parameter.as_double(), test_epsilon);
     }
     else
     {
@@ -110,18 +119,26 @@ void verify_get_parameters_async(
   std::shared_ptr<rclcpp::Node> node,
   std::shared_ptr<rclcpp::parameter_client::AsyncParametersClient> parameters_client)
 {
-  // List the details of a few parameters up to a namespace depth of 10.
-  auto result = parameters_client->list_parameters({"foo", "bar"}, 10);
+  auto result = parameters_client->list_parameters({"foo", "bar"}, 0);
   rclcpp::spin_until_future_complete(node, result);
   auto parameters_and_prefixes = result.get();
   for (auto & name : parameters_and_prefixes.names) {
-    std::cout << "Parameter name: " << name << std::endl;
     EXPECT_TRUE(name == "foo" || name == "bar");
   }
   for (auto & prefix : parameters_and_prefixes.prefixes) {
     EXPECT_STREQ("foo", prefix.c_str());
   }
 
+  // Test different depth
+  auto result4 = parameters_client->list_parameters({"foo"}, 1);
+  rclcpp::spin_until_future_complete(node, result4);
+  auto parameters_and_prefixes4 = result4.get();
+  for (auto & name : parameters_and_prefixes4.names) {
+    EXPECT_TRUE(name == "foo" || name == "foo.first" || name == "foo.second");
+  }
+  for (auto & prefix : parameters_and_prefixes4.prefixes) {
+    EXPECT_STREQ("foo", prefix.c_str());
+  }
 
 
   // Get a few of the parameters just set.
@@ -129,11 +146,11 @@ void verify_get_parameters_async(
   rclcpp::spin_until_future_complete(node, result2);
   for( auto& parameter : result2.get())
   {
-    std::cout << parameter.get_name() << parameter.to_string() << parameter.get_type_name() << std::endl;
     if (parameter.get_name() == "foo")
     {
+      EXPECT_STREQ("foo", parameter.get_name().c_str());
       EXPECT_STREQ("2", parameter.to_string().c_str());
-      EXPECT_STREQ("int", parameter.get_type_name().c_str());
+      EXPECT_STREQ("integer", parameter.get_type_name().c_str());
     }
     else if (parameter.get_name() == "bar")
     {
@@ -142,8 +159,8 @@ void verify_get_parameters_async(
     }
     else if (parameter.get_name() == "baz")
     {
-      EXPECT_STREQ("1.45", parameter.to_string().c_str());
       EXPECT_STREQ("double", parameter.get_type_name().c_str());
+      EXPECT_NEAR(1.45, parameter.as_double(), test_epsilon);
     }
     else
     {
@@ -157,5 +174,6 @@ void verify_get_parameters_async(
   for ( auto & parameter : result3.get()) {
     EXPECT_STREQ("There should be no matches", parameter.get_name().c_str());
   }
+
 }
 #endif  // __test_communication__parameter_fixtures__hpp__
