@@ -21,7 +21,7 @@
 
 #include "parameter_fixtures.hpp"
 
-TEST(parameters, test_remote_parameters){
+TEST(parameters, test_remote_parameters) {
 
   std::string test_server_name = "test_parameter_server";
   //TODO(tfoote) make test_server name parameterizable
@@ -32,17 +32,17 @@ TEST(parameters, test_remote_parameters){
 
   auto node = rclcpp::Node::make_shared(std::string("test_remote_parameters"));
 
-  auto parameters_client = std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node, test_server_name);
+  auto parameters_client = std::make_shared<rclcpp::parameter_client::AsyncParametersClient>(node,
+      test_server_name);
 
   verify_set_parameters_async(node, parameters_client);
 
   verify_get_parameters_async(node, parameters_client);
-
 }
 
 
-
-int main(int argc, char **argv) {
+int main(int argc, char ** argv)
+{
   rclcpp::init(argc, argv);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

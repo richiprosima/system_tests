@@ -40,7 +40,8 @@ TEST(parameters, local_asynchronous) {
   verify_get_parameters_async(node, parameters_client);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char ** argv)
+{
   rclcpp::init(argc, argv);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

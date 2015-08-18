@@ -88,23 +88,16 @@ void verify_test_parameters(
   // Get a few of the parameters just set.
   for (auto & parameter : parameters_client->get_parameters({"foo", "bar", "baz"})) {
     //std::cout << "Parameter is:" << std::endl << parameter.to_yaml() << std::endl;
-    if (parameter.get_name() == "foo")
-    {
+    if (parameter.get_name() == "foo") {
       EXPECT_STREQ("2", parameter.to_string().c_str());
       EXPECT_STREQ("integer", parameter.get_type_name().c_str());
-    }
-    else if (parameter.get_name() == "bar")
-    {
+    } else if (parameter.get_name() == "bar") {
       EXPECT_STREQ("hello", parameter.to_string().c_str());
       EXPECT_STREQ("string", parameter.get_type_name().c_str());
-    }
-    else if (parameter.get_name() == "baz")
-    {
+    } else if (parameter.get_name() == "baz") {
       EXPECT_STREQ("double", parameter.get_type_name().c_str());
       EXPECT_NEAR(1.45, parameter.as_double(), test_epsilon);
-    }
-    else
-    {
+    } else {
       ASSERT_FALSE("you should never hit this");
     }
   }
@@ -144,26 +137,18 @@ void verify_get_parameters_async(
   // Get a few of the parameters just set.
   auto result2 = parameters_client->get_parameters({{"foo", "bar", "baz"}});
   rclcpp::spin_until_future_complete(node, result2);
-  for( auto& parameter : result2.get())
-  {
-    if (parameter.get_name() == "foo")
-    {
+  for (auto & parameter : result2.get()) {
+    if (parameter.get_name() == "foo") {
       EXPECT_STREQ("foo", parameter.get_name().c_str());
       EXPECT_STREQ("2", parameter.to_string().c_str());
       EXPECT_STREQ("integer", parameter.get_type_name().c_str());
-    }
-    else if (parameter.get_name() == "bar")
-    {
+    } else if (parameter.get_name() == "bar") {
       EXPECT_STREQ("hello", parameter.to_string().c_str());
       EXPECT_STREQ("string", parameter.get_type_name().c_str());
-    }
-    else if (parameter.get_name() == "baz")
-    {
+    } else if (parameter.get_name() == "baz") {
       EXPECT_STREQ("double", parameter.get_type_name().c_str());
       EXPECT_NEAR(1.45, parameter.as_double(), test_epsilon);
-    }
-    else
-    {
+    } else {
       ASSERT_FALSE("you should never hit this");
     }
   }
@@ -171,7 +156,7 @@ void verify_get_parameters_async(
   // Get a few non existant parameters
   auto result3 = parameters_client->get_parameters({{"not_foo", "not_baz"}});
   rclcpp::spin_until_future_complete(node, result3);
-  for ( auto & parameter : result3.get()) {
+  for (auto & parameter : result3.get()) {
     EXPECT_STREQ("There should be no matches", parameter.get_name().c_str());
   }
 

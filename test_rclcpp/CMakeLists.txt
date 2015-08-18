@@ -19,6 +19,7 @@ if(AMENT_ENABLE_TESTING)
   set(message_files
     "msg/UInt32.msg"
   )
+
   rosidl_generate_interfaces(${PROJECT_NAME}
     ${message_files}
     SKIP_INSTALL
@@ -170,12 +171,7 @@ if(AMENT_ENABLE_TESTING)
       @ONLY
     )
     ament_add_nose_test(parameter_server_cpp__${middleware_impl} "${CMAKE_CURRENT_BINARY_DIR}/test_parameters_server_cpp__${middleware_impl}.py" TIMEOUT 15)
-      set_tests_properties(
-        parameter_server_cpp__${middleware_impl}
-        PROPERTIES DEPENDS "test_parameters_server_cpp__${middleware_impl}
-                            test_remote_parameters_cpp__${middleware_impl}"
-    )
-
+      set_tests_properties(parameter_server_cpp__${middleware_impl} PROPERTIES DEPENDS "test_parameters_server_cpp__${middleware_impl} test_remote_parameters_cpp__${middleware_impl}")
 
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
