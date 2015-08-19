@@ -23,7 +23,7 @@
 
 TEST(parameters, test_remote_parameters) {
 
-  std::string test_server_name = "test_parameter_server";
+  std::string test_server_name = "test_parameters_server";
   //TODO(tfoote) make test_server name parameterizable
   // if (argc >= 2) {
   //   test_server_name = argv[1];
