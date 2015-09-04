@@ -175,8 +175,10 @@ if(AMENT_ENABLE_TESTING)
     ament_target_dependencies(test_parameters_server_cpp__${middleware_impl}
       "${middleware_impl}"
       "rclcpp")
-    set(TEST_PARAMETERS_SERVER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_parameters_server_cpp__${middleware_impl}${test_executable_extension}")
-    set(TEST_REMOTE_PARAMETERS_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_remote_parameters_cpp__${middleware_impl}${test_executable_extension}")
+    get_target_property(TEST_PARAMETERS_SERVER_EXECUTABLE test_parameters_server_cpp__${middleware_impl} LOCATION)
+    string(REPLACE "$(Configuration)" "$<CONFIGURATION>" TEST_PARAMETERS_SERVER_EXECUTABLE "${TEST_PARAMETERS_SERVER_EXECUTABLE}")
+    get_target_property(TEST_REMOTE_PARAMETERS_EXECUTABLE test_remote_parameters_cpp__${middleware_impl} LOCATION)
+    string(REPLACE "$(Configuration)" "$<CONFIGURATION>" TEST_REMOTE_PARAMETERS_EXECUTABLE "${TEST_REMOTE_PARAMETERS_EXECUTABLE}")
     configure_file(
       test/test_parameters_server.py.in
       test_parameters_server_cpp__${middleware_impl}.py
