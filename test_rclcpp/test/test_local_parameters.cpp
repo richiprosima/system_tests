@@ -42,6 +42,7 @@ TEST(parameters, local_asynchronous) {
 
 int main(int argc, char ** argv)
 {
+  // NOTE: use custom main to ensure that rclcpp::init is called only once
   rclcpp::init(argc, argv);
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
