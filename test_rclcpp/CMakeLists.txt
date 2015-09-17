@@ -30,6 +30,17 @@ if(AMENT_ENABLE_TESTING)
     SKIP_INSTALL
   )
 
+  if(NOT WIN32)
+    set(test_executable_extension "")
+    set(test_executable_subfolder "")
+  else()
+    set(test_executable_extension ".exe")
+    set(test_executable_subfolder "/${CMAKE_BUILD_TYPE}")
+    if("${test_executable_subfolder}" STREQUAL "/")
+      set(test_executable_subfolder "/Debug")
+    endif()
+  endif()
+
   # get the rmw implementations ahead of time
   get_available_rmw_implementations(middleware_implementations)
   foreach(middleware_impl ${middleware_implementations})
@@ -224,16 +235,8 @@ if(AMENT_ENABLE_TESTING)
     ament_target_dependencies(test_services_server_cpp__${middleware_impl}
       "${middleware_impl}"
       "rclcpp")
-    # TODO consider using a generator expression instead
-    # $<TARGET_FILE:target>
-    # until then set the policy explicitly in order to avoid warning with newer CMake versions.
-    if(POLICY CMP0026)
-      cmake_policy(SET CMP0026 OLD)
-    endif()
-    get_target_property(TEST_SERVICES_SERVER_EXECUTABLE test_services_server_cpp__${middleware_impl} LOCATION)
-    string(REPLACE "$(Configuration)" "$<CONFIGURATION>" TEST_SERVICES_SERVER_EXECUTABLE "${TEST_SERVICES_SERVER_EXECUTABLE}")
-    get_target_property(TEST_SERVICES_CLIENT_EXECUTABLE test_services_client_cpp__${middleware_impl} LOCATION)
-    string(REPLACE "$(Configuration)" "$<CONFIGURATION>" TEST_SERVICES_CLIENT_EXECUTABLE "${TEST_SERVICES_CLIENT_EXECUTABLE}")
+    set(TEST_SERVICES_SERVER_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_services_server_cpp__${middleware_impl}${test_executable_extension}")
+    set(TEST_SERVICES_CLIENT_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}${test_executable_subfolder}/test_services_client_cpp__${middleware_impl}${test_executable_extension}")
     configure_file(
       test/test_services.py.in
       test_services_cpp__${middleware_impl}.py
