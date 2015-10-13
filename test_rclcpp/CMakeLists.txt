@@ -266,8 +266,6 @@ if(AMENT_ENABLE_TESTING)
     ament_add_nose_test(test_services_cpp__${middleware_impl} "${CMAKE_CURRENT_BINARY_DIR}/test_services_cpp__${middleware_impl}.py" TIMEOUT 30)
     set_tests_properties(test_services_cpp__${middleware_impl} PROPERTIES DEPENDS "test_services_cpp__${middleware_impl} test_services_cpp__${middleware_impl}")
 
-=======
->>>>>>> Add test for multiple nodes for 1 executor
   endforeach()
 endif()  # AMENT_ENABLE_TESTING
 
