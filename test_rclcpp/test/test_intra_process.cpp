@@ -181,6 +181,8 @@ TEST(test_intra_process_two_nodes, nominal_usage) {
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
   msg->data = 0;
   rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node1);
+  executor.add_node(node2);
 
   {
     // Subscribe in node 2
@@ -191,13 +193,8 @@ TEST(test_intra_process_two_nodes, nominal_usage) {
     ASSERT_EQ(0, counter);
 
     // nothing should be pending here
-    printf("spin_node_once(nonblocking) - no callback expected\n");
-    executor.spin_node_once(node1, std::chrono::milliseconds(0));
-    executor.spin_node_once(node2, std::chrono::milliseconds(0));
-    ASSERT_EQ(0, counter);
-    printf("spin_node_some() - no callback expected\n");
-    executor.spin_node_some(node1);
-    executor.spin_node_some(node2);
+    printf("spin_some() - no callback expected\n");
+    executor.spin_some();
     ASSERT_EQ(0, counter);
 
     msg->data = 1;
@@ -207,10 +204,9 @@ TEST(test_intra_process_two_nodes, nominal_usage) {
     // wait for the first callback
     {
       size_t i = 0;
-      while (counter == 0 && i < 2) {
-        printf("spin_node_once() - callback (1) expected - try %zu/2\n", ++i);
-        executor.spin_node_once(node1, std::chrono::milliseconds(0));
-        executor.spin_node_once(node2, std::chrono::milliseconds(0));
+      while (counter == 0 && i < 3) {
+        printf("spin_some() - callback (1) expected - try %zu/4\n", ++i);
+        executor.spin_some();
         if (counter != 0) {
           break;
         }
@@ -222,12 +218,7 @@ TEST(test_intra_process_two_nodes, nominal_usage) {
 
     // nothing should be pending here
     printf("spin_node_once(nonblocking) - no callback expected\n");
-    executor.spin_node_once(node1, std::chrono::milliseconds(0));
-    executor.spin_node_once(node2, std::chrono::milliseconds(0));
-    ASSERT_EQ(1, counter);
-    printf("spin_node_some() - no callback expected\n");
-    executor.spin_node_some(node1);
-    executor.spin_node_some(node2);
+    executor.spin_some();
     ASSERT_EQ(1, counter);
 
     msg->data = 2;
@@ -240,45 +231,13 @@ TEST(test_intra_process_two_nodes, nominal_usage) {
     publisher->publish(msg);
     ASSERT_EQ(1, counter);
 
-    // while four messages have been published one callback should be triggered here
-    {
-      size_t i = 0;
-      while (counter == 1 && i < 2) {
-        // give the executor thread time to process the event
-        std::this_thread::sleep_for(std::chrono::milliseconds(25));
-        printf("spin_node_once(nonblocking) - callback (2) expected - try %zu/2\n", ++i);
-        executor.spin_node_once(node1, std::chrono::milliseconds(0));
-        executor.spin_node_once(node2, std::chrono::milliseconds(0));
-      }
-    }
-    ASSERT_EQ(2, counter);
-
-    // check for next pending call
-    {
-      size_t i = 0;
-      while (counter == 2 && i < 2) {
-        // give the executor thread time to process the event
-        std::this_thread::sleep_for(std::chrono::milliseconds(25));
-        printf("spin_node_once(nonblocking) - callback (3) expected - try %zu/2\n", ++i);
-        executor.spin_node_once(node1, std::chrono::milliseconds(0));
-        executor.spin_node_once(node2, std::chrono::milliseconds(0));
-      }
-    }
-    ASSERT_EQ(3, counter);
-
-    // check for all remaning calls
-    printf("spin_node_some() - callbacks (4 and 5) expected\n");
-    executor.spin_node_some(node1);
-    executor.spin_node_some(node2);
-    if (counter == 3 || counter == 4) {
-      // give the executor thread time to process the event
-      std::this_thread::sleep_for(std::chrono::milliseconds(25));
-      printf("spin_node_some() - callback (%s) expected - trying again\n",
-        counter == 3 ? "4 and 5" : "5");
-      executor.spin_node_once(node1, std::chrono::milliseconds(0));
-      executor.spin_node_once(node2, std::chrono::milliseconds(0));
+    int i = 0;
+    while (counter < 5 && i < 5) {
+      executor.spin_some();
+      printf("spin_some() -  %zu/5\n", ++i);
     }
     ASSERT_EQ(5, counter);
+
   }
   // the subscriber goes out of scope and should be not receive any callbacks anymore
 

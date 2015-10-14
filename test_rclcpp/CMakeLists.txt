@@ -174,27 +174,6 @@ if(AMENT_ENABLE_TESTING)
         "rclcpp")
     endif()
 
-
-    # test_multiple_nodes.cpp
-    ament_add_gtest(
-      gtest_multiple_nodes__${middleware_impl}
-      "test/test_multiple_nodes.cpp"
-      TIMEOUT 30
-    )
-    if(TARGET gtest_multiple_nodes__${middleware_impl})
-      target_link_libraries(gtest_multiple_nodes__${middleware_impl}
-        ${_AMENT_EXPORT_ABSOLUTE_LIBRARIES}
-        ${_AMENT_EXPORT_LIBRARY_TARGETS})
-      target_compile_definitions(gtest_multiple_nodes__${middleware_impl}
-        PUBLIC "RMW_IMPLEMENTATION=${middleware_impl}")
-      add_dependencies(gtest_multiple_nodes__${middleware_impl} ${PROJECT_NAME})
-      rosidl_target_interfaces(gtest_multiple_nodes__${middleware_impl}
-        ${PROJECT_NAME} ${typesupport_impl})
-      ament_target_dependencies(gtest_multiple_nodes__${middleware_impl}
-        "${middleware_impl}"
-        "rclcpp")
-    endif()
-
     if(TARGET local_parameters_cpp__${middleware_impl})
       ament_add_gtest(local_parameters_cpp__${middleware_impl} SKIP_LINKING_MAIN_LIBRARIES "test/local_parameters.cpp")
       add_dependencies(local_parameters_cpp__${middleware_impl} ${PROJECT_NAME})
