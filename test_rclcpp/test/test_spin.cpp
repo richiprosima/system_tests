@@ -44,7 +44,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
   auto timer = node->create_wall_timer(std::chrono::milliseconds(25), callback);
 
   ASSERT_EQ(rclcpp::spin_until_future_complete(node, future),
-    rclcpp::executors::FutureReturnCode::SUCCESS);
+    rclcpp::executor::FutureReturnCode::SUCCESS);
   EXPECT_EQ(future.get(), true);
 }
 
@@ -66,11 +66,11 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_timeou
   auto timer = node->create_wall_timer(std::chrono::milliseconds(50), callback);
 
   ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(25)),
-    rclcpp::executors::FutureReturnCode::TIMEOUT);
+    rclcpp::executor::FutureReturnCode::TIMEOUT);
 
   // If we wait a little longer, we should complete the future
   ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(50)),
-    rclcpp::executors::FutureReturnCode::SUCCESS);
+    rclcpp::executor::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ(future.get(), true);
 }
@@ -99,7 +99,7 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete_interr
   auto shutdown_timer = node->create_wall_timer(std::chrono::milliseconds(25), shutdown_callback);
 
   ASSERT_EQ(rclcpp::spin_until_future_complete(node, future, std::chrono::milliseconds(50)),
-    rclcpp::executors::FutureReturnCode::INTERRUPTED);
+    rclcpp::executor::FutureReturnCode::INTERRUPTED);
 }
 
 int main(int argc, char ** argv)
