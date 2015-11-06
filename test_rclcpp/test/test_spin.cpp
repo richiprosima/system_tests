@@ -43,7 +43,9 @@ TEST(CLASSNAME(test_spin, RMW_IMPLEMENTATION), spin_until_future_complete) {
     };
   auto timer = node->create_wall_timer(std::chrono::milliseconds(25), callback);
 
-  ASSERT_EQ(rclcpp::spin_until_future_complete(node, future),
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
+  ASSERT_EQ(executor.spin_until_future_complete(future),
     rclcpp::executor::FutureReturnCode::SUCCESS);
   EXPECT_EQ(future.get(), true);
 }
