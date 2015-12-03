@@ -243,7 +243,8 @@ static inline void multi_access_publisher(bool intra_process)
     {
       if (timer_counter.load() >= iterations) {
         timer.cancel();
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+        // Wait for pending subscription callbacks to trigger.
+        std::this_thread::sleep_for(std::chrono::milliseconds(executor.get_number_of_threads()));
         executor.cancel();
         return;
       }
