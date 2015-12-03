@@ -97,7 +97,8 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
       if (msg->data > 5) {
         timer.cancel();
         // wait for the last callback to fire before cancelling
-        rclcpp::utilities::sleep_for(2_ms);
+        // Wait for pending subscription callbacks to trigger.
+        std::this_thread::sleep_for(std::chrono::milliseconds(executor.get_number_of_threads()));
         executor.cancel();
         return;
       }
