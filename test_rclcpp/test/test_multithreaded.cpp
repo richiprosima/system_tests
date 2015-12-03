@@ -66,6 +66,7 @@ static inline void multi_consumer_pub_sub_test(bool intra_process)
 
   executor.add_node(node);
   auto msg = std::make_shared<test_rclcpp::msg::UInt32>();
+  msg->data = 0;
 
   // wait a moment for everything to initialize
   // TODO(jacquelinekay): fix nondeterministic startup behavior
