@@ -76,12 +76,12 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
   // Initialize executor 1.
   rclcpp::executors::SingleThreadedExecutor executor1;
   auto callback1 = [&counter, &counter_goal, &executor1]() {
-    if (counter == counter_goal) {
-      executor1.cancel();
-      return;
-    }
-    ++counter;
-  };
+      if (counter == counter_goal) {
+        executor1.cancel();
+        return;
+      }
+      ++counter;
+    };
   auto node1 = rclcpp::Node::make_shared("multiple_executors_1");
   auto timer1 = node1->create_wall_timer(1_ms, callback1);
   executor1.add_node(node1);
@@ -90,19 +90,19 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
   rclcpp::executors::SingleThreadedExecutor executor2;
 
   auto callback2 = [&counter, &counter_goal, &executor2]() {
-    if (counter == counter_goal) {
-      executor2.cancel();
-      return;
-    }
-    ++counter;
-  };
+      if (counter == counter_goal) {
+        executor2.cancel();
+        return;
+      }
+      ++counter;
+    };
   auto node2 = rclcpp::Node::make_shared("multiple_executors_2");
   auto timer2 = node2->create_wall_timer(1_ms, callback2);
   executor2.add_node(node2);
 
   auto spin_executor2 = [&executor2]() {
-    executor2.spin();
-  };
+      executor2.spin();
+    };
 
   // Launch both executors
   std::thread execution_thread(spin_executor2);
