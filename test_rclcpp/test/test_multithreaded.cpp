@@ -243,7 +243,8 @@ static inline void multi_access_publisher(bool intra_process)
 
   const size_t iterations = 5 * executor.get_number_of_threads();
   auto timer_callback =
-    [&executor, &pub, &msg, &timer_counter, &subscription_counter, &iterations](rclcpp::timer::TimerBase & timer)
+    [&executor, &pub, &msg, &timer_counter, &subscription_counter,
+    &iterations](rclcpp::timer::TimerBase & timer)
     {
       if (timer_counter.load() >= iterations) {
         timer.cancel();
