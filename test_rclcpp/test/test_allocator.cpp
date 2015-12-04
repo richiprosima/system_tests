@@ -356,6 +356,7 @@ TEST_F(AllocatorTest, allocator_shared_ptr) {
 
   auto subscriber = node_->create_subscription<test_rclcpp::msg::UInt32>(
     "allocator_shared_ptr", 10, callback, nullptr, false, msg_memory_strategy_, alloc);
+
   // Create msg to be published
   auto msg = std::allocate_shared<test_rclcpp::msg::UInt32>(*alloc.get());
 

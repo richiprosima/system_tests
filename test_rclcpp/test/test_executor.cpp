@@ -88,6 +88,7 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
 
   // Initialize executor 2.
   rclcpp::executors::SingleThreadedExecutor executor2;
+
   auto callback2 = [&counter, &counter_goal, &executor2]() {
     if (counter == counter_goal) {
       executor2.cancel();
@@ -109,6 +110,9 @@ TEST(CLASSNAME(test_executor, RMW_IMPLEMENTATION), multiple_executors) {
   executor1.spin();
   execution_thread.join();
   EXPECT_EQ(counter.load(), counter_goal);
+
+  // Try to add node1 to executor2. It should throw, since node1 was already added to executor1.
+  ASSERT_THROW(executor2.add_node(node1), std::runtime_error);
 }
 
 int main(int argc, char ** argv)
