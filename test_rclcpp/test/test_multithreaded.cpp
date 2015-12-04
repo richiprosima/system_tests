@@ -252,6 +252,7 @@ static inline void multi_access_publisher(bool intra_process)
         // Wait for pending subscription callbacks to trigger.
         while (subscription_counter < timer_counter && i < executor.get_number_of_threads()) {
           rclcpp::utilities::sleep_for(1_ms);
+          ++i;
         }
         executor.cancel();
         return;
