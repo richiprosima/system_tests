@@ -330,7 +330,10 @@ protected:
     publisher_ = node_->create_publisher<test_rclcpp::msg::UInt32>(name, 10, alloc);
     memory_strategy_ =
       std::make_shared<AllocatorMemoryStrategy<InstrumentedAllocator<void>>>(alloc);
-    executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>(memory_strategy_);
+    rclcpp::executor::ExecutorArgs args;
+    args.memory_strategy = memory_strategy_;
+    args.max_conditions = 4;
+    executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>(args);
 
     executor_->add_node(node_);
   }
